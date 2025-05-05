@@ -17,7 +17,6 @@ export const useAuthStore = create((set) => ({
         headers: {
           "Content-Type": "application/json",
         },
-        withCredentials: true,
         body: JSON.stringify({
           username,
           password,
@@ -30,7 +29,7 @@ export const useAuthStore = create((set) => ({
       if (!response.ok) throw new Error(data.message || "Something went wrong");
 
       await AsyncStorage.setItem("user", JSON.stringify(data.user));
-      await AsyncStorage.setItem("token", JSON.stringify(data.token));
+      await AsyncStorage.setItem("token", data.token);
       set({ token: data.token, user: data.user, isLoading: false });
       return { success: true };
     } catch (error) {

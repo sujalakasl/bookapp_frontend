@@ -15,7 +15,6 @@ export default function RootLayout() {
 
   useEffect(() => {
     checkAuth();
-    console.log(token, user);
   }, []);
 
   //Handle navigation based on auth state
