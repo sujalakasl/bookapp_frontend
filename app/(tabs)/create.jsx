@@ -88,8 +88,12 @@ export default function Create() {
         ? `image/${fileType.toLowerCase()}`
         : "image/jpeg";
 
+      //convert base64 to standard data url
       const imageDataUrl = `data:image/png;base64,${imagebase64}`;
-    } catch {}
+      fetch();
+    } catch {
+      error;
+    }
   };
 
   //Function to render the rating picker
