@@ -18,6 +18,7 @@ import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { useAuthStore } from "../../store/authStore";
+import { API_URL } from "../../constants/api";
 
 export default function Create() {
   const [title, setTitle] = useState("");
@@ -28,6 +29,7 @@ export default function Create() {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+  const { token } = useAuthStore();
   const pickImage = async () => {
     try {
       //requst permission to access the camera roll
@@ -64,7 +66,7 @@ export default function Create() {
         //convert to base 64
         const base64 = await FileSystem.readAsStringAsync(
           result.assets[0].uri,
-          { encoding: FileSystem.EncodingType.base64 }
+          { encoding: FileSystem.EncodingType.Base64 }
         );
         setImageBase64(base64);
       }
@@ -84,15 +86,41 @@ export default function Create() {
       //get file extension fromuri to default to jpeg
       const uriParts = image.split(".");
       const fileType = uriParts[uriParts.length - 1];
-      const imageTyoe = fileType
+      const imageType = fileType
         ? `image/${fileType.toLowerCase()}`
         : "image/jpeg";
 
-      //convert base64 to standard data url
-      const imageDataUrl = `data:image/png;base64,${imagebase64}`;
-      fetch();
-    } catch {
-      error;
+      const imageDataUrl = `data:${imageType};base64,${imagebase64}`;
+      const response = await fetch(`${API_URL}/books`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          caption,
+          rating: rating.toString(),
+          image: imageDataUrl,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Something went wrong");
+
+      Alert.alert("Success", "Book added successfully");
+
+      //Set all states to default after book is saved to database
+      setTitle("");
+      setCaption("");
+      setImage(null);
+      setRating(3);
+      setImageBase64(null);
+      router.push("/");
+    } catch (error) {
+      console.error("Error creating post: ", error);
+      Alert.alert("Error", error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -132,7 +160,7 @@ export default function Create() {
             <Text style={styles.title}>Add Book Recommendation</Text>
             <Text style={styles.subtitle}>Share your reads with others</Text>
           </View>
-          <View style="styles.form">
+          <View style={styles.form}>
             {/* BOOK TITLE */}
             <View style={styles.formGroup}>
               <Text style={styles.label}>Book Title</Text>
@@ -193,7 +221,6 @@ export default function Create() {
               />
 
               {/* BUTTON */}
-
               <TouchableOpacity
                 style={styles.button}
                 onPress={handleSubmit}
