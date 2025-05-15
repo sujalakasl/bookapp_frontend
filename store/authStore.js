@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
-import { API_URL } from "../constants/api";
+import { API_URL, CLOUD_API_URL } from "../constants/api";
 //Create a Global Store with Zustand
 // Zustand is a small, fast, and scalable bearbones state-management solution
 // that is easy to use and has a small footprint.
@@ -13,7 +13,7 @@ export const useAuthStore = create((set) => ({
     set({ isLoading: true });
     try {
       // Call the API from backend to register the user
-      const response = await fetch(`${API_URL}/auth/register`, {
+      const response = await fetch(`${CLOUD_API_URL}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -43,7 +43,7 @@ export const useAuthStore = create((set) => ({
     set({ isLoading: true });
     try {
       // Call the API from backend to login the user
-      const response = await fetch(`${API_URL}/auth/login`, {
+      const response = await fetch(`${CLOUD_API_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

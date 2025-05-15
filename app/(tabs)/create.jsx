@@ -18,7 +18,7 @@ import { useRouter } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { useAuthStore } from "../../store/authStore";
-import { API_URL } from "../../constants/api";
+import { API_URL, CLOUD_API_URL } from "../../constants/api";
 
 export default function Create() {
   const [title, setTitle] = useState("");
@@ -91,7 +91,7 @@ export default function Create() {
         : "image/jpeg";
 
       const imageDataUrl = `data:${imageType};base64,${imagebase64}`;
-      const response = await fetch(`${API_URL}/books`, {
+      const response = await fetch(`${CLOUD_API_URL}/api/books`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
